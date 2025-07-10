@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "nombre": "Radio Ejemplo",
+    "genero": "Pop",
+    "pais": "Argentina",
+    "logo": "https://via.placeholder.com/150",
+    "url": "https://stream.example.com/radio.mp3"
+  }
+]
