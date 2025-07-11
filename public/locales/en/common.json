@@ -1,0 +1,21 @@
+{
+  "title": "🐱 TutoGo Radio",
+  "subtitle": "Explore and listen to your favorite stations",
+  "searchPlaceholder": "Search by name",
+  "countryPlaceholder": "Country (e.g., Brazil)",
+  "languagePlaceholder": "Language (e.g., Portuguese)",
+  "filterButton": "Filter",
+  "loading": "Loading stations...",
+  "noStations": "No stations found.",
+  "error": "Error loading stations: {{message}}",
+  "playing": "Playing: {{name}}",
+  "previous": "Previous",
+  "next": "Next",
+  "weather": "Weather in {{city}}",
+  "topGlobal": "Top 5 global stations",
+  "history": "Listening history",
+  "play": "Play",
+  "pause": "Pause",
+  "stop": "Stop",
+  "volume": "Volume"
+}
