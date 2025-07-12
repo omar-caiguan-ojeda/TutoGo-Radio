@@ -1,250 +1,142 @@
-
-
-// // src/components/RadioPlayer.jsx
-// import { useState, useEffect, useRef } from "react";
-// import { useTranslation } from "next-i18next";
-// import { Howl } from "howler";
-// import { FaSpinner, FaPlay, FaPause, FaStop, FaVolumeUp } from "react-icons/fa";
-
-// function RadioPlayer({ current }) {
-//   const { t } = useTranslation("common");
-//   const [isPlaying, setIsPlaying] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [volume, setVolume] = useState(0.5);
-//   const soundRef = useRef(null);
-
-//   useEffect(() => {
-//     if (current) {
-//       setIsLoading(true);
-//       if (soundRef.current) {
-//         soundRef.current.stop();
-//         soundRef.current.unload();
-//       }
-
-//       soundRef.current = new Howl({
-//         src: [current.url_resolved],
-//         format: [current.codec.toLowerCase() === "mp3" ? "mp3" : "aac"],
-//         html5: true,
-//         autoplay: true,
-//         volume,
-//         onplay: () => {
-//           setIsPlaying(true);
-//           setIsLoading(false);
-//         },
-//         onstop: () => {
-//           setIsPlaying(false);
-//           setIsLoading(false);
-//         },
-//         onend: () => {
-//           setIsPlaying(false);
-//           setIsLoading(false);
-//         },
-//         onloaderror: () => {
-//           alert(t("error", { message: "No se pudo cargar la emisora" }));
-//           setIsLoading(false);
-//         },
-//         onplayerror: () => {
-//           alert(t("error", { message: "Error al reproducir la emisora" }));
-//           setIsLoading(false);
-//         },
-//       });
-
-//       return () => {
-//         if (soundRef.current) {
-//           soundRef.current.stop();
-//           soundRef.current.unload();
-//         }
-//       };
-//     }
-//   }, [current, t]);
-
-//   const handleVolumeChange = (e) => {
-//     const newVolume = parseFloat(e.target.value);
-//     setVolume(newVolume);
-//     if (soundRef.current) {
-//       soundRef.current.volume(newVolume);
-//     }
-//   };
-
-//   return (
-//     <div className="fixed bottom-0 left-0 right-0 bg-[#334155] p-4 shadow-lg z-50">
-//       {current ? (
-//         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-//           <div>
-//             <h3 className="text-lg text-[#F97316] font-medium">
-//               {isLoading ? (
-//                 <FaSpinner className="animate-spin inline mr-2" />
-//               ) : (
-//                 "🔊 "
-//               )}
-//               {t("playing", { name: current.name })}
-//             </h3>
-//             <p className="text-sm text-[#F1F5F9]">
-//               {current.tags || "Sin género"} · {current.country || "Desconocido"}
-//             </p>
-//           </div>
-//           <div className="flex items-center gap-2">
-//             <button
-//               onClick={() => {
-//                 if (soundRef.current) {
-//                   if (isPlaying) {
-//                     soundRef.current.pause();
-//                     setIsPlaying(false);
-//                   } else {
-//                     soundRef.current.play();
-//                     setIsPlaying(true);
-//                   }
-//                 }
-//               }}
-//               className="bg-[#F97316] text-white p-2 rounded hover:bg-opacity-80 transition"
-//             >
-//               {isPlaying ? <FaPause /> : <FaPlay />}
-//             </button>
-//             <button
-//               onClick={() => {
-//                 if (soundRef.current) {
-//                   soundRef.current.stop();
-//                   setIsPlaying(false);
-//                 }
-//               }}
-//               className="bg-[#F97316] text-white p-2 rounded hover:bg-opacity-80 transition"
-//             >
-//               <FaStop />
-//             </button>
-//             <div className="flex items-center gap-2">
-//               <FaVolumeUp className="text-[#F97316]" />
-//               <input
-//                 type="range"
-//                 min="0"
-//                 max="1"
-//                 step="0.01"
-//                 value={volume}
-//                 onChange={handleVolumeChange}
-//                 className="w-24 accent-[#F97316]"
-//               />
-//             </div>
-//           </div>
-//         </div>
-//       ) : (
-//         <div className="text-center text-[#F1F5F9]">{t("noStations")}</div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default RadioPlayer;
-
-
-
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Howl } from "howler";
-import { FaSpinner, FaPlay, FaPause, FaStop, FaVolumeUp } from "react-icons/fa";
+import { FaPlay, FaPause, FaMusic, FaVolumeUp } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
-function RadioPlayer({ current }) {
+export default function RadioPlayer({ current }) {
+  const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(0.5);
-  const soundRef = useRef(null);
 
   useEffect(() => {
     if (current) {
       setIsLoading(true);
-      if (soundRef.current) {
-        soundRef.current.stop();
-        soundRef.current.unload();
-      }
-
-      soundRef.current = new Howl({
+      const newSound = new Howl({
         src: [current.url_resolved],
-        format: [current.codec.toLowerCase() === "mp3" ? "mp3" : "aac"],
         html5: true,
-        autoplay: true,
-        volume,
+        format: [current.codec.toLowerCase()],
+        volume: volume,
         onplay: () => {
+          setIsLoading(false);
           setIsPlaying(true);
-          setIsLoading(false);
-        },
-        onstop: () => {
-          setIsPlaying(false);
-          setIsLoading(false);
-        },
-        onend: () => {
-          setIsPlaying(false);
-          setIsLoading(false);
         },
         onloaderror: () => {
-          alert("No se pudo cargar la emisora");
           setIsLoading(false);
+          console.error("Error al cargar la emisora");
         },
         onplayerror: () => {
-          alert("Error al reproducir la emisora");
           setIsLoading(false);
+          console.error("Error al reproducir la emisora");
         },
       });
-
+      setSound(newSound);
+      newSound.play();
       return () => {
-        if (soundRef.current) {
-          soundRef.current.stop();
-          soundRef.current.unload();
-        }
+        newSound.stop();
+        newSound.unload();
+        setSound(null);
+        setIsPlaying(false);
+        setIsLoading(false);
       };
     }
   }, [current]);
 
-  const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (soundRef.current) {
-      soundRef.current.volume(newVolume);
+  useEffect(() => {
+    if (sound) {
+      sound.volume(volume);
+    }
+  }, [volume, sound]);
+
+  const togglePlay = () => {
+    if (sound) {
+      if (isPlaying) {
+        sound.pause();
+        setIsPlaying(false);
+      } else {
+        sound.play();
+        setIsPlaying(true);
+      }
     }
   };
 
+  const handleVolumeChange = (e) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+  };
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#334155] p-4 shadow-lg z-50">
-      {current ? (
-        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="w-full bg-[#334155] p-4 rounded-lg border-8 border-[#F97316]">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{
+          opacity: 1,
+          scale: isLoading ? [1, 1.1, 1] : 1,
+          transition: isLoading
+            ? { scale: { repeat: Infinity, duration: 0.8 } }
+            : { duration: 0.3 },
+        }}
+        className="flex items-center justify-between"
+      >
+        <div className="flex items-center gap-4">
+          <img
+            src={current ? current.favicon || "/iconEmisora.PNG" : "/iconEmisora.PNG"}
+            alt={current ? current.name : "Reproductor"}
+            className="w-12 h-12 object-contain rounded"
+          />
           <div>
-            <h3 className="text-lg text-[#F97316] font-medium">
-              {isLoading ? (
-                <FaSpinner className="animate-spin inline mr-2" />
-              ) : (
-                "🔊 "
-              )}
-              Reproduciendo: {current.name}
-            </h3>
-            <p className="text-sm text-[#F1F5F9]">
-              {current.tags || "Sin género"} · {current.country || "Desconocido"}
+            <p className="font-semibold text-[#F1F5F9]">
+              {current ? current.name : "Selecciona una emisora"}
+            </p>
+            <p className="text-sm text-gray-300">
+              {current ? current.country : "No hay emisora seleccionada"}
             </p>
           </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <AnimatePresence>
+            {isPlaying && !isLoading && (
+              <motion.div
+                className="flex gap-1"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {[0, 1, 2].map((index) => (
+                  <motion.div
+                    key={index}
+                    animate={{
+                      y: [0, -10, 0],
+                      opacity: [0.3, 1, 0.3],
+                      transition: {
+                        y: { repeat: Infinity, duration: 1.5, delay: index * 0.3 },
+                        opacity: { repeat: Infinity, duration: 1.5, delay: index * 0.3 },
+                      },
+                    }}
+                  >
+                    <FaMusic className="text-[#F97316] text-lg" />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                if (soundRef.current) {
-                  if (isPlaying) {
-                    soundRef.current.pause();
-                    setIsPlaying(false);
-                  } else {
-                    soundRef.current.play();
-                    setIsPlaying(true);
-                  }
-                }
-              }}
-              className="bg-[#F97316] text-white p-2 rounded hover:bg-opacity-80 transition"
-            >
-              {isPlaying ? <FaPause /> : <FaPlay />}
-            </button>
-            <button
-              onClick={() => {
-                if (soundRef.current) {
-                  soundRef.current.stop();
-                  setIsPlaying(false);
-                }
-              }}
-              className="bg-[#F97316] text-white p-2 rounded hover:bg-opacity-80 transition"
-            >
-              <FaStop />
-            </button>
-            <div className="flex items-center gap-2">
+            {isLoading ? (
+              <span className="text-[#F97316]">Cargando...</span>
+            ) : (
+              <button
+                onClick={togglePlay}
+                disabled={!current}
+                className={`p-2 rounded-full transition ${
+                  current
+                    ? "bg-[#F97316] text-white hover:bg-opacity-80"
+                    : "bg-gray-500 text-gray-300 cursor-not-allowed"
+                }`}
+              >
+                {isPlaying ? <FaPause /> : <FaPlay />}
+              </button>
+            )}
+            <div className="flex items-center gap-1">
               <FaVolumeUp className="text-[#F97316]" />
               <input
                 type="range"
@@ -253,16 +145,207 @@ function RadioPlayer({ current }) {
                 step="0.01"
                 value={volume}
                 onChange={handleVolumeChange}
-                className="w-24 accent-[#F97316]"
+                disabled={!current}
+                className={`w-24 accent-[#F97316] ${
+                  !current ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               />
             </div>
           </div>
         </div>
-      ) : (
-        <div className="text-center text-[#F1F5F9]">No se seleccionó ninguna emisora</div>
-      )}
+      </motion.div>
     </div>
   );
 }
 
-export default RadioPlayer;
+
+// import { useEffect, useState } from "react";
+// import { Howl } from "howler";
+// import { FaPlay, FaPause, FaMusic, FaVolumeUp } from "react-icons/fa";
+// import { motion, AnimatePresence } from "framer-motion";
+
+// export default function RadioPlayer({ current }) {
+//   const [sound, setSound] = useState(null);
+//   const [isPlaying, setIsPlaying] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [volume, setVolume] = useState(0.5);
+
+//   useEffect(() => {
+//     if (current) {
+//       setIsLoading(true);
+//       const newSound = new Howl({
+//         src: [current.url_resolved],
+//         html5: true,
+//         format: [current.codec.toLowerCase()],
+//         volume: volume,
+//         onplay: () => {
+//           setIsLoading(false);
+//           setIsPlaying(true);
+//         },
+//         onloaderror: () => {
+//           setIsLoading(false);
+//           console.error("Error al cargar la emisora");
+//         },
+//         onplayerror: () => {
+//           setIsLoading(false);
+//           console.error("Error al reproducir la emisora");
+//         },
+//       });
+//       setSound(newSound);
+//       newSound.play();
+//       return () => {
+//         newSound.stop();
+//         newSound.unload();
+//         setSound(null);
+//         setIsPlaying(false);
+//         setIsLoading(false);
+//       };
+//     }
+//   }, [current]);
+
+//   useEffect(() => {
+//     if (sound) {
+//       sound.volume(volume);
+//     }
+//   }, [volume, sound]);
+
+//   const togglePlay = () => {
+//     if (sound) {
+//       if (isPlaying) {
+//         sound.pause();
+//         setIsPlaying(false);
+//       } else {
+//         sound.play();
+//         setIsPlaying(true);
+//       }
+//     }
+//   };
+
+//   const handleVolumeChange = (e) => {
+//     const newVolume = parseFloat(e.target.value);
+//     setVolume(newVolume);
+//   };
+
+//   // Combinar nombre de la emisora y título de la canción (placeholder)
+//   const getDisplayText = () => {
+//     if (!current) return "Selecciona una emisora";
+//     const songTitle = current.tags ? current.tags.split(",")[0] : "Canción desconocida";
+//     const fullText = `${current.name} - ${songTitle}`;
+//     return fullText.length > 50 ? `${fullText.slice(0, 47)}...` : fullText;
+//   };
+
+//   return (
+//     <div className="w-full bg-[#334155] p-4 rounded-lg border-4 border-[#F97316]">
+//       <style>
+//         {`
+//           .marquee {
+//             display: inline-block;
+//             white-space: nowrap;
+//             animation: marquee 10s linear infinite;
+//           }
+//           @keyframes marquee {
+//             0% { transform: translateX(0); }
+//             100% { transform: translateX(-100%); }
+//           }
+//           .marquee-container {
+//             overflow: hidden;
+//             white-space: nowrap;
+//             width: 100%;
+//           }
+//           .marquee:hover {
+//             animation-play-state: paused;
+//           }
+//         `}
+//       </style>
+//       <motion.div
+//         initial={{ opacity: 0, scale: 0.8 }}
+//         animate={{
+//           opacity: 1,
+//           scale: isLoading ? [1, 1.1, 1] : 1,
+//           transition: isLoading
+//             ? { scale: { repeat: Infinity, duration: 0.8 } }
+//             : { duration: 0.3 },
+//         }}
+//         className="flex items-center justify-between"
+//       >
+//         <div className="flex items-center gap-4 flex-1">
+//           <img
+//             src={current ? current.favicon || "/iconEmisora.PNG" : "/iconEmisora.PNG"}
+//             alt={current ? current.name : "Reproductor"}
+//             className="w-12 h-12 object-contain rounded"
+//           />
+//           <div className="flex-1">
+//             <div className="marquee-container">
+//               <p className="font-semibold text-[#F1F5F9] marquee">
+//                 {getDisplayText()}
+//               </p>
+//             </div>
+//             <p className="text-sm text-gray-300">
+//               {current ? current.country : "No hay emisora seleccionada"}
+//             </p>
+//           </div>
+//         </div>
+//         <div className="flex items-center gap-4">
+//           <AnimatePresence>
+//             {isPlaying && !isLoading && (
+//               <motion.div
+//                 className="flex gap-1"
+//                 initial={{ opacity: 0 }}
+//                 animate={{ opacity: 1 }}
+//                 exit={{ opacity: 0 }}
+//               >
+//                 {[0, 1, 2].map((index) => (
+//                   <motion.div
+//                     key={index}
+//                     animate={{
+//                       y: [0, -10, 0],
+//                       opacity: [0.3, 1, 0.3],
+//                       transition: {
+//                         y: { repeat: Infinity, duration: 1.5, delay: index * 0.3 },
+//                         opacity: { repeat: Infinity, duration: 1.5, delay: index * 0.3 },
+//                       },
+//                     }}
+//                   >
+//                     <FaMusic className="text-[#F97316] text-lg" />
+//                   </motion.div>
+//                 ))}
+//               </motion.div>
+//             )}
+//           </AnimatePresence>
+//           <div className="flex items-center gap-2">
+//             {isLoading ? (
+//               <span className="text-[#F97316]">Cargando...</span>
+//             ) : (
+//               <button
+//                 onClick={togglePlay}
+//                 disabled={!current}
+//                 className={`p-2 rounded-full transition ${
+//                   current
+//                     ? "bg-[#F97316] text-white hover:bg-opacity-80"
+//                     : "bg-gray-500 text-gray-300 cursor-not-allowed"
+//                 }`}
+//               >
+//                 {isPlaying ? <FaPause /> : <FaPlay />}
+//               </button>
+//             )}
+//             <div className="flex items-center gap-1">
+//               <FaVolumeUp className="text-[#F97316]" />
+//               <input
+//                 type="range"
+//                 min="0"
+//                 max="1"
+//                 step="0.01"
+//                 value={volume}
+//                 onChange={handleVolumeChange}
+//                 disabled={!current}
+//                 className={`w-24 accent-[#F97316] ${
+//                   !current ? "opacity-50 cursor-not-allowed" : ""
+//                 }`}
+//               />
+//             </div>
+//           </div>
+//         </div>
+//       </motion.div>
+//     </div>
+//   );
+// }

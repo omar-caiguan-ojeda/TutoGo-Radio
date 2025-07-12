@@ -1,10 +1,13 @@
 
+
 // import { useState, useEffect } from "react";
 // import axios from "axios";
 // import { FaCloud, FaSun, FaCloudRain } from "react-icons/fa";
+// import { motion, AnimatePresence } from "framer-motion";
 // import TopStations from "./TopStations";
+// import RadioFilters from "./RadioFilters";
 
-// export default function Sidebar({ onPlay }) {
+// export default function Sidebar({ onPlay, onFilterChange }) {
 //   const [weather, setWeather] = useState(null);
 //   const [history, setHistory] = useState([]);
 
@@ -34,9 +37,9 @@
 //     if (onPlay) {
 //       const addToHistory = (station) => {
 //         const newHistory = [
-//           station,
+//           { ...station, addedAt: Date.now() }, // Agregar timestamp para animaciones
 //           ...history.filter((s) => s.stationuuid !== station.stationuuid),
-//         ].slice(0, 5);
+//         ].slice(0, 5); // Limitar a 5 items
 //         setHistory(newHistory);
 //         localStorage.setItem("radioHistory", JSON.stringify(newHistory));
 //       };
@@ -52,7 +55,8 @@
 //   };
 
 //   return (
-//     <div className="w-full sm:w-80 bg-[#334155] p-4 rounded-lg sm:sticky top-4">
+//     <div className="w-full sm:w-80 bg-[#334155] p-4 rounded-lg sm:sticky top-4 max-h-screen overflow-y-auto">
+//       <RadioFilters onFilterChange={onFilterChange} />
 //       {weather && (
 //         <div className="mb-6">
 //           <h3 className="text-lg text-[#F97316] font-medium">
@@ -68,20 +72,27 @@
 //       <div>
 //         <h3 className="text-lg text-[#F97316] font-medium">Historial</h3>
 //         <ul className="text-[#F1F5F9]">
-//           {history.map((station) => (
-//             <li
-//               key={station.stationuuid}
-//               className="py-1 hover:text-[#F97316] cursor-pointer"
-//               onClick={() => onPlay(station)}
-//             >
-//               {station.name}
-//             </li>
-//           ))}
+//           <AnimatePresence>
+//             {history.map((station) => (
+//               <motion.li
+//                 key={station.stationuuid}
+//                 initial={{ opacity: 0, x: 50 }}
+//                 animate={{ opacity: 1, x: 0 }}
+//                 exit={{ opacity: 0, x: -50 }}
+//                 transition={{ duration: 0.3 }}
+//                 className="py-1 hover:text-[#F97316] cursor-pointer"
+//                 onClick={() => onPlay(station)}
+//               >
+//                 {station.name}
+//               </motion.li>
+//             ))}
+//           </AnimatePresence>
 //         </ul>
 //       </div>
 //     </div>
 //   );
 // }
+
 
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -120,9 +131,9 @@ export default function Sidebar({ onPlay, onFilterChange }) {
     if (onPlay) {
       const addToHistory = (station) => {
         const newHistory = [
-          { ...station, addedAt: Date.now() }, // Agregar timestamp para animaciones
+          { ...station, addedAt: Date.now() },
           ...history.filter((s) => s.stationuuid !== station.stationuuid),
-        ].slice(0, 5); // Limitar a 5 items
+        ].slice(0, 5);
         setHistory(newHistory);
         localStorage.setItem("radioHistory", JSON.stringify(newHistory));
       };
@@ -138,7 +149,29 @@ export default function Sidebar({ onPlay, onFilterChange }) {
   };
 
   return (
-    <div className="w-full sm:w-80 bg-[#334155] p-4 rounded-lg sm:sticky top-4 max-h-screen overflow-y-auto">
+    <div
+      className="w-full sm:w-80 bg-[#334155] p-4 rounded-lg sm:sticky top-4 max-h-screen overflow-y-auto"
+      style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#F97316 #1E1E1E',
+      }}
+    >
+      <style jsx>{`
+        div::-webkit-scrollbar {
+          width: 8px;
+        }
+        div::-webkit-scrollbar-track {
+          background: #1E1E1E;
+          border-radius: 4px;
+        }
+        div::-webkit-scrollbar-thumb {
+          background: #F97316;
+          border-radius: 4px;
+        }
+        div::-webkit-scrollbar-thumb:hover {
+          background: #e86514;
+        }
+      `}</style>
       <RadioFilters onFilterChange={onFilterChange} />
       {weather && (
         <div className="mb-6">
