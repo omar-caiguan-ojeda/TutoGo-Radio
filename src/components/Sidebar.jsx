@@ -1,13 +1,11 @@
-// // src/components/Sidebar.jsx
+
 // import { useState, useEffect } from "react";
-// import { useTranslation } from "next-i18next";
 // import axios from "axios";
 // import { FaCloud, FaSun, FaCloudRain } from "react-icons/fa";
+// import TopStations from "./TopStations";
 
 // export default function Sidebar({ onPlay }) {
-//   const { t } = useTranslation("common");
 //   const [weather, setWeather] = useState(null);
-//   const [topStations, setTopStations] = useState([]);
 //   const [history, setHistory] = useState([]);
 
 //   useEffect(() => {
@@ -15,22 +13,17 @@
 //     if (navigator.geolocation) {
 //       navigator.geolocation.getCurrentPosition(async (position) => {
 //         const { latitude, longitude } = position.coords;
-//         const apiKey = "f09c0d582d57f99582dc7ec273da3c6e" //"TU_API_KEY"; // Reemplaza con tu API key de OpenWeatherMap
+//         const apiKey = process.env.OPENWEATHER_API_KEY || "f09c0d582d57f99582dc7ec273da3c6e";
 //         try {
 //           const response = await axios.get(
 //             `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
 //           );
 //           setWeather(response.data);
 //         } catch (error) {
-//           console.error("Error fetching weather:", error);
+//           console.error("Error al obtener el clima:", error);
 //         }
 //       });
 //     }
-
-//     // Obtener top 5 estaciones
-//     axios.get("https://de1.api.radio-browser.info/json/stations/topvote/5")
-//       .then((response) => setTopStations(response.data))
-//       .catch((error) => console.error("Error fetching top stations:", error));
 
 //     // Cargar historial desde localStorage
 //     const savedHistory = JSON.parse(localStorage.getItem("radioHistory")) || [];
@@ -63,7 +56,7 @@
 //       {weather && (
 //         <div className="mb-6">
 //           <h3 className="text-lg text-[#F97316] font-medium">
-//             {t("weather", { city: weather.name })}
+//             Clima en {weather.name}
 //           </h3>
 //           <div className="flex items-center gap-2">
 //             {getWeatherIcon(weather.weather[0].main.toLowerCase())}
@@ -71,22 +64,9 @@
 //           </div>
 //         </div>
 //       )}
-//       <div className="mb-6">
-//         <h3 className="text-lg text-[#F97316] font-medium">{t("topGlobal")}</h3>
-//         <ul className="text-[#F1F5F9]">
-//           {topStations.map((station) => (
-//             <li
-//               key={station.stationuuid}
-//               className="py-1 hover:text-[#F97316] cursor-pointer"
-//               onClick={() => onPlay(station)}
-//             >
-//               {station.name}
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
+//       <TopStations onPlay={onPlay} />
 //       <div>
-//         <h3 className="text-lg text-[#F97316] font-medium">{t("history")}</h3>
+//         <h3 className="text-lg text-[#F97316] font-medium">Historial</h3>
 //         <ul className="text-[#F1F5F9]">
 //           {history.map((station) => (
 //             <li
@@ -103,14 +83,15 @@
 //   );
 // }
 
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaCloud, FaSun, FaCloudRain } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import TopStations from "./TopStations";
+import RadioFilters from "./RadioFilters";
 
-export default function Sidebar({ onPlay }) {
+export default function Sidebar({ onPlay, onFilterChange }) {
   const [weather, setWeather] = useState(null);
-  const [topStations, setTopStations] = useState([]);
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
@@ -118,7 +99,7 @@ export default function Sidebar({ onPlay }) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const { latitude, longitude } = position.coords;
-        const apiKey = "f09c0d582d57f99582dc7ec273da3c6e"; // Reemplaza con tu API key de OpenWeatherMap
+        const apiKey = process.env.OPENWEATHER_API_KEY || "f09c0d582d57f99582dc7ec273da3c6e";
         try {
           const response = await axios.get(
             `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
@@ -130,11 +111,6 @@ export default function Sidebar({ onPlay }) {
       });
     }
 
-    // Obtener top 5 estaciones
-    axios.get("https://de1.api.radio-browser.info/json/stations/topvote/5")
-      .then((response) => setTopStations(response.data))
-      .catch((error) => console.error("Error al obtener emisoras principales:", error));
-
     // Cargar historial desde localStorage
     const savedHistory = JSON.parse(localStorage.getItem("radioHistory")) || [];
     setHistory(savedHistory);
@@ -144,9 +120,9 @@ export default function Sidebar({ onPlay }) {
     if (onPlay) {
       const addToHistory = (station) => {
         const newHistory = [
-          station,
+          { ...station, addedAt: Date.now() }, // Agregar timestamp para animaciones
           ...history.filter((s) => s.stationuuid !== station.stationuuid),
-        ].slice(0, 5);
+        ].slice(0, 5); // Limitar a 5 items
         setHistory(newHistory);
         localStorage.setItem("radioHistory", JSON.stringify(newHistory));
       };
@@ -162,7 +138,8 @@ export default function Sidebar({ onPlay }) {
   };
 
   return (
-    <div className="w-full sm:w-80 bg-[#334155] p-4 rounded-lg sm:sticky top-4">
+    <div className="w-full sm:w-80 bg-[#334155] p-4 rounded-lg sm:sticky top-4 max-h-screen overflow-y-auto">
+      <RadioFilters onFilterChange={onFilterChange} />
       {weather && (
         <div className="mb-6">
           <h3 className="text-lg text-[#F97316] font-medium">
@@ -174,32 +151,25 @@ export default function Sidebar({ onPlay }) {
           </div>
         </div>
       )}
-      <div className="mb-6">
-        <h3 className="text-lg text-[#F97316] font-medium">Emisoras principales</h3>
-        <ul className="text-[#F1F5F9]">
-          {topStations.map((station) => (
-            <li
-              key={station.stationuuid}
-              className="py-1 hover:text-[#F97316] cursor-pointer"
-              onClick={() => onPlay(station)}
-            >
-              {station.name}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <TopStations onPlay={onPlay} />
       <div>
         <h3 className="text-lg text-[#F97316] font-medium">Historial</h3>
         <ul className="text-[#F1F5F9]">
-          {history.map((station) => (
-            <li
-              key={station.stationuuid}
-              className="py-1 hover:text-[#F97316] cursor-pointer"
-              onClick={() => onPlay(station)}
-            >
-              {station.name}
-            </li>
-          ))}
+          <AnimatePresence>
+            {history.map((station) => (
+              <motion.li
+                key={station.stationuuid}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.3 }}
+                className="py-1 hover:text-[#F97316] cursor-pointer"
+                onClick={() => onPlay(station)}
+              >
+                {station.name}
+              </motion.li>
+            ))}
+          </AnimatePresence>
         </ul>
       </div>
     </div>
