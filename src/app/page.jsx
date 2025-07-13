@@ -1239,7 +1239,41 @@ export default function Home() {
           <FaBars />
         </button>
       </div>
-      <p className="text-center mb-6">Explorá y escuchá tus emisoras favoritas</p>
+
+      {/* <p className="text-center mb-6">Explorá y escuchá tus emisoras favoritas</p> */}
+
+      <div className="text-center mb-6 flex flex-col items-center space-y-2">
+        <div className="flex items-center justify-center space-x-2">
+          {/* <img
+            src="/Geminis.svg"
+            alt="Geminis Icon"
+            className="w-6 h-6 object-contain filter brightness-1 invert opacity-50"
+          />
+          <h2 className="text-lg sm:text-xl font-semibold text-[#F97316]">
+            Un desarrollo de GEM <span className="font-light">IT</span>
+          </h2> */}
+
+          <p className="text-sm sm:text-base text-gray-300 flex flex-wrap justify-center items-center gap-1">
+            <span>Un desarrollo de</span>
+            <img
+              src="/Geminis.svg"
+              alt="Geminis Icon"
+              className="w-5 h-5 sm:w-6 sm:h-6 object-contain filter brightness-1 invert opacity-50"
+            />
+            <span className="text-[#F97316] font-bold tracking-tight">
+              GEM <span className="font-light">IT</span>
+            </span>
+            <span>– Innovación y tecnología, el equilibrio perfecto.</span>
+          </p>
+
+
+
+        </div>
+        <p className="text-sm italic text-gray-300 max-w-xl">
+          TutoGo Radio es un proyecto creado por Omar Caiguan, pensado para que descubras y escuches tus emisoras favoritas con la mejor experiencia.  
+        </p>
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-4">
         <div className={`${isSidebarOpen ? "block" : "hidden"} sm:block sm:w-80`}>
           <Sidebar onPlay={handlePlay} onFilterChange={handleFilterChange} />
@@ -1268,6 +1302,9 @@ export default function Home() {
             </div>
             {data && data.length > 0 && (
               <div className="flex justify-center gap-4 mt-6">
+                <span className="text-[#F97316] font-medium self-center mr-4">
+                  Página {Math.floor(offset / 20) + 1}
+                </span>
                 <button
                   onClick={() => setOffset((prev) => Math.max(prev - 20, 0))}
                   disabled={offset === 0}
@@ -1276,10 +1313,11 @@ export default function Home() {
                   Anterior
                 </button>
                 <button
-                  // onClick={() => setOffset((prev) => prev + 20)}
-                  // disabled={data.length < offset + 20}
-                  onClick={() => setOffset((prev) => prev + 20)}
-                  disabled={!data || data.length < 20}
+                  onClick={() => {
+                     setOffset((prev) => prev + 20);
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                   }}
+                   disabled={!data || data.length < 20}
                   className="bg-[#F97316] text-white py-2 px-4 rounded hover:bg-opacity-80 disabled:opacity-50 hover:cursor-pointer"
                 >
                   Siguiente
