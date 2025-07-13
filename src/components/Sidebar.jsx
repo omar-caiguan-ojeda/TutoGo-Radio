@@ -1,48 +1,4 @@
-
-
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-// import { FaCloud, FaSun, FaCloudRain } from "react-icons/fa";
-// import { motion, AnimatePresence } from "framer-motion";
-// import TopStations from "./TopStations";
-// import RadioFilters from "./RadioFilters";
-
-// export default function Sidebar({ onPlay, onFilterChange }) {
-//   const [weather, setWeather] = useState(null);
-//   const [history, setHistory] = useState([]);
-
-//   useEffect(() => {
-//     // Obtener ubicación del usuario
-//     if (navigator.geolocation) {
-//       navigator.geolocation.getCurrentPosition(async (position) => {
-//         const { latitude, longitude } = position.coords;
-//         const apiKey = process.env.OPENWEATHER_API_KEY || "f09c0d582d57f99582dc7ec273da3c6e";
-//         try {
-//           const response = await axios.get(
-//             `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
-//           );
-//           setWeather(response.data);
-//         } catch (error) {
-//           console.error("Error al obtener el clima:", error);
-//         }
-//       });
-//     }
-
-//     // Cargar historial desde localStorage
-//     const savedHistory = JSON.parse(localStorage.getItem("radioHistory")) || [];
-//     setHistory(savedHistory);
-//   }, []);
-
-//   useEffect(() => {
-//     if (onPlay) {
-//       const addToHistory = (station) => {
-//         const newHistory = [
-//           { ...station, addedAt: Date.now() }, // Agregar timestamp para animaciones
-//           ...history.filter((s) => s.stationuuid !== station.stationuuid),
-//         ].slice(0, 5); // Limitar a 5 items
-//         setHistory(newHistory);
-//         localStorage.setItem("radioHistory", JSON.stringify(newHistory));
-//       };
+// src/components/Sidebar.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaCloud, FaSun, FaCloudRain } from "react-icons/fa";

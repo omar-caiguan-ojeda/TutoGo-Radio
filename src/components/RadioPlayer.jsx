@@ -1,3 +1,4 @@
+// src/components/RadioPlayer.jsx
 import { useEffect, useState } from "react";
 import { Howl } from "howler";
 import { FaPlay, FaPause, FaMusic, FaVolumeUp } from "react-icons/fa";
@@ -160,22 +161,3 @@ export default function RadioPlayer({ current }) {
     </div>
   );
 }
-//               <input
-//                 type="range"
-//                 min="0"
-//                 max="1"
-//                 step="0.01"
-//                 value={volume}
-//                 onChange={handleVolumeChange}
-//                 disabled={!current}
-//                 className={`w-24 accent-[#F97316] ${
-//                   !current ? "opacity-50 cursor-not-allowed" : ""
-//                 }`}
-//               />
-//             </div>
-//           </div>
-//         </div>
-//       </motion.div>
-//     </div>
-//   );
-// }
