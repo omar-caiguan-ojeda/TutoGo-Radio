@@ -99,7 +99,7 @@ export default function Sidebar({ onPlay, onFilterChange }) {
 
   return (
     <div
-      className="w-full sm:w-80 bg-gradient-to-br from-[#1e1e1e]/90 via-[#334155]/90 to-[#1e1e1e]/80 p-4 rounded-2xl shadow-lg shadow-[#F97316]/20 border-2 border-[#F97316]/40 backdrop-blur-sm sm:sticky top-4 max-h-screen overflow-y-auto"
+      className="w-full max-w-xs sm:w-80 bg-gradient-to-br from-[#1e1e1e]/90 via-[#334155]/90 to-[#1e1e1e]/80 p-4 sm:p-6 rounded-2xl shadow-lg shadow-[#F97316]/20 border-2 border-[#F97316]/40 backdrop-blur-sm sm:sticky top-4 max-h-screen overflow-y-auto focus:outline-none focus:ring-2 focus:ring-[#F97316]"
       style={{
         scrollbarWidth: 'thin',
         scrollbarColor: '#F97316 #1E1E1E',
