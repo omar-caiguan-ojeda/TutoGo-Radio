@@ -66,7 +66,10 @@ export default function RadioPlayer({ current }) {
   };
 
   return (
-    <div className="w-full bg-[#334155] p-4 rounded-lg border-8 border-[#F97316]">
+    <div
+  className="w-full max-w-4xl mx-auto bg-gradient-to-br from-[#1e1e1e]/90 via-[#334155]/90 to-[#1e1e1e]/80 p-4 rounded-2xl shadow-lg shadow-[#F97316]/20 border-2 border-[#F97316]/40 backdrop-blur-sm z-20"
+  style={{ position: 'sticky', top: '1rem' }}
+>
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{
