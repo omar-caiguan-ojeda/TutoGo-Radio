@@ -6,7 +6,7 @@ export const RADIO_API_SERVERS = [
 
 export const DEFAULT_COUNTRY_CODE = "CL";
 
-export const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || "f09c0d582d57f99582dc7ec273da3c6e";
+export const OPENWEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
 
 export const TOP_STATIONS = [
   {

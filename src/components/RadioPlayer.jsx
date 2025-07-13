@@ -175,10 +175,12 @@ export default function RadioPlayer({ current }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(0.5);
+  const [playError, setPlayError] = useState(null);
 
   useEffect(() => {
     if (current) {
       setIsLoading(true);
+      setPlayError(null);
       const newSound = new Howl({
         src: [current.url_resolved],
         html5: true,
@@ -187,14 +189,15 @@ export default function RadioPlayer({ current }) {
         onplay: () => {
           setIsLoading(false);
           setIsPlaying(true);
+          setPlayError(null);
         },
-        onloaderror: () => {
+        onloaderror: (id, err) => {
           setIsLoading(false);
-          console.error("Error al cargar la emisora");
+          setPlayError("No se pudo cargar la emisora. Puede que el servidor esté caído o no sea compatible con tu navegador.");
         },
-        onplayerror: () => {
+        onplayerror: (id, err) => {
           setIsLoading(false);
-          console.error("Error al reproducir la emisora");
+          setPlayError("No se pudo reproducir la emisora. Intenta con otra emisora o revisa tu conexión.");
         },
       });
       setSound(newSound);
@@ -239,6 +242,15 @@ export default function RadioPlayer({ current }) {
       role="region"
       aria-label="Reproductor de radio"
     >
+      {playError && (
+        <div className="mb-3 flex items-center gap-2 bg-[#F97316]/90 border-l-4 border-[#F97316] text-white rounded p-3 animate-shake shadow-lg">
+          <FaMusic className="text-2xl animate-pulse" />
+          <div>
+            <p className="font-semibold">¡Ups! Hubo un problema</p>
+            <p className="text-xs sm:text-sm">{playError}</p>
+          </div>
+        </div>
+      )}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{

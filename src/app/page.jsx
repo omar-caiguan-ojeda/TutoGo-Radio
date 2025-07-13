@@ -300,6 +300,7 @@ import Footer from "@/components/Footer";
 import PawAnimation from "@/components/PawAnimation";
 import { FaBars, FaLinkedin, FaEnvelope, FaWhatsapp, FaGlobe, FaFileAlt } from "react-icons/fa";
 import { RADIO_API_SERVERS, DEFAULT_COUNTRY_CODE } from "@/config";
+import PaginationControls from "@/components/PaginationControls";
 
 async function fetchStations({ search = "", offset = 0, countryCode = "" }) {
   let lastError = null;
@@ -330,7 +331,7 @@ async function fetchStations({ search = "", offset = 0, countryCode = "" }) {
 
 async function fetchCountryCode() {
   try {
-    const response = await axios.get("https://ipapi.co/json/");
+    const response = await axios.get("/api/ipinfo");
     return response.data.country_code || DEFAULT_COUNTRY_CODE;
   } catch (error) {
     console.error("Error al obtener el país:", error);
@@ -348,8 +349,9 @@ export default function Home() {
   useEffect(() => {
     fetchCountryCode().then((code) => {
       setCountryCode(code);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-  }, []);
+  }, [offset]); // sin offset
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["stations", filters, offset, countryCode],
@@ -476,30 +478,19 @@ export default function Home() {
                   <RadioCard key={radio.stationuuid} radio={radio} onPlay={handlePlay} />
                 ))}
             </div>
-            {data && data.length > 0 && (
-              <div className="flex justify-center gap-4 mt-4 sm:mt-6">
-                <span className="text-[#F97316] font-medium self-center mr-4 text-sm sm:text-base">
-                  Página {Math.floor(offset / 20) + 1}
-                </span>
-                <button
-                  onClick={() => setOffset((prev) => Math.max(prev - 20, 0))}
-                  disabled={offset === 0}
-                  className="bg-[#F97316] text-white py-1 sm:py-2 px-3 sm:px-4 rounded hover:bg-opacity-80 disabled:opacity-50 hover:cursor-pointer text-sm sm:text-base"
-                >
-                  Anterior
-                </button>
-                <button
-                  onClick={() => {
-                    setOffset((prev) => prev + 20);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  disabled={!data || data.length < 20}
-                  className="bg-[#F97316] text-white py-1 sm:py-2 px-3 sm:px-4 rounded hover:bg-opacity-80 disabled:opacity-50 hover:cursor-pointer text-sm sm:text-base"
-                >
-                  Siguiente
-                </button>
-              </div>
-            )}
+
+            <PaginationControls
+
+              offset={offset}
+              dataLength={data?.length || 0}
+              onPrevious={() => {
+                setOffset((prev) => Math.max(prev - 20, 0));
+              }}
+              onNext={() => {
+                setOffset((prev) => prev + 20);
+              }}
+            />
+
           </div>
         </div>
       </div>
