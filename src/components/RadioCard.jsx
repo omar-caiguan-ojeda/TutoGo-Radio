@@ -100,7 +100,7 @@ export default function RadioCard({ radio, onPlay }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-[#334155] p-4 rounded-lg shadow-md w-64"
+      className="bg-gradient-to-br from-[#1e1e1e]/90 via-[#334155]/90 to-[#1e1e1e]/80 p-4 rounded-2xl shadow-lg shadow-[#F97316]/20 border-2 border-[#F97316]/40 backdrop-blur-sm w-64"
     >
       <img
         src={isValidUrl(radio.favicon) ? radio.favicon : "/iconEmisora.PNG"}
@@ -111,7 +111,7 @@ export default function RadioCard({ radio, onPlay }) {
       <p className="text-gray-300 text-sm truncate">{radio.country}</p>
       <button
         onClick={() => onPlay(radio)}
-        className="mt-2 bg-[#F97316] text-white py-1 px-3 rounded hover:bg-opacity-80 flex items-center gap-2"
+        className="mt-2 bg-[#F97316] text-white py-1 px-3 rounded hover:bg-opacity-80 flex items-center gap-2 hover:cursor-pointer"
       >
         <FaPlay /> Reproducir
       </button>

@@ -43,57 +43,6 @@
 //         setHistory(newHistory);
 //         localStorage.setItem("radioHistory", JSON.stringify(newHistory));
 //       };
-//       onPlay.addToHistory = addToHistory;
-//     }
-//   }, [history, onPlay]);
-
-//   const getWeatherIcon = (weatherCode) => {
-//     if (weatherCode.includes("cloud")) return <FaCloud />;
-//     if (weatherCode.includes("clear")) return <FaSun />;
-//     if (weatherCode.includes("rain")) return <FaCloudRain />;
-//     return <FaCloud />;
-//   };
-
-//   return (
-//     <div className="w-full sm:w-80 bg-[#334155] p-4 rounded-lg sm:sticky top-4 max-h-screen overflow-y-auto">
-//       <RadioFilters onFilterChange={onFilterChange} />
-//       {weather && (
-//         <div className="mb-6">
-//           <h3 className="text-lg text-[#F97316] font-medium">
-//             Clima en {weather.name}
-//           </h3>
-//           <div className="flex items-center gap-2">
-//             {getWeatherIcon(weather.weather[0].main.toLowerCase())}
-//             <p className="text-[#F1F5F9]">{weather.main.temp}°C - {weather.weather[0].description}</p>
-//           </div>
-//         </div>
-//       )}
-//       <TopStations onPlay={onPlay} />
-//       <div>
-//         <h3 className="text-lg text-[#F97316] font-medium">Historial</h3>
-//         <ul className="text-[#F1F5F9]">
-//           <AnimatePresence>
-//             {history.map((station) => (
-//               <motion.li
-//                 key={station.stationuuid}
-//                 initial={{ opacity: 0, x: 50 }}
-//                 animate={{ opacity: 1, x: 0 }}
-//                 exit={{ opacity: 0, x: -50 }}
-//                 transition={{ duration: 0.3 }}
-//                 className="py-1 hover:text-[#F97316] cursor-pointer"
-//                 onClick={() => onPlay(station)}
-//               >
-//                 {station.name}
-//               </motion.li>
-//             ))}
-//           </AnimatePresence>
-//         </ul>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaCloud, FaSun, FaCloudRain } from "react-icons/fa";
@@ -150,7 +99,7 @@ export default function Sidebar({ onPlay, onFilterChange }) {
 
   return (
     <div
-      className="w-full sm:w-80 bg-[#334155] p-4 rounded-lg sm:sticky top-4 max-h-screen overflow-y-auto"
+      className="w-full sm:w-80 bg-gradient-to-br from-[#1e1e1e]/90 via-[#334155]/90 to-[#1e1e1e]/80 p-4 rounded-2xl shadow-lg shadow-[#F97316]/20 border-2 border-[#F97316]/40 backdrop-blur-sm sm:sticky top-4 max-h-screen overflow-y-auto"
       style={{
         scrollbarWidth: 'thin',
         scrollbarColor: '#F97316 #1E1E1E',
@@ -172,19 +121,19 @@ export default function Sidebar({ onPlay, onFilterChange }) {
           background: #e86514;
         }
       `}</style>
-      <RadioFilters onFilterChange={onFilterChange} />
+      <RadioFilters onFilterChange={onFilterChange} className="hover:cursor-pointer" />
       {weather && (
         <div className="mb-6">
           <h3 className="text-lg text-[#F97316] font-medium">
             Clima en {weather.name}
           </h3>
-          <div className="flex items-center gap-2">
+          <div className="bg-[#F97316] text-white py-1 px-2 rounded hover:bg-opacity-80 flex items-center gap-2 cursor-pointer">
             {getWeatherIcon(weather.weather[0].main.toLowerCase())}
-            <p className="text-[#F1F5F9]">{weather.main.temp}°C - {weather.weather[0].description}</p>
+            <p className="text-[#F1F5F9] cursor-pointer">{weather.main.temp}°C - {weather.weather[0].description}</p>
           </div>
         </div>
       )}
-      <TopStations onPlay={onPlay} />
+      <TopStations onPlay={onPlay} className="cursor-pointer" />
       <div>
         <h3 className="text-lg text-[#F97316] font-medium">Historial</h3>
         <ul className="text-[#F1F5F9]">

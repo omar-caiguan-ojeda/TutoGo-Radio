@@ -1071,7 +1071,7 @@ async function fetchStations({ search = "", offset = 0, countryCode = "" }) {
         url = `${server}/json/stations`;
       }
       const response = await axios.get(url, {
-        params: { offset, limit: 100, hidebroken: true, order: "clickcount", reverse: true },
+        params: { offset, limit: 20, hidebroken: true, order: "clickcount", reverse: true },
       });
       return response.data;
     } catch (error) {
@@ -1271,14 +1271,16 @@ export default function Home() {
                 <button
                   onClick={() => setOffset((prev) => Math.max(prev - 20, 0))}
                   disabled={offset === 0}
-                  className="bg-[#F97316] text-white py-2 px-4 rounded hover:bg-opacity-80 disabled:opacity-50"
+                  className="bg-[#F97316] text-white py-2 px-4 rounded hover:bg-opacity-80 disabled:opacity-50 hover:cursor-pointer"
                 >
                   Anterior
                 </button>
                 <button
+                  // onClick={() => setOffset((prev) => prev + 20)}
+                  // disabled={data.length < offset + 20}
                   onClick={() => setOffset((prev) => prev + 20)}
-                  disabled={data.length < 20}
-                  className="bg-[#F97316] text-white py-2 px-4 rounded hover:bg-opacity-80 disabled:opacity-50"
+                  disabled={!data || data.length < 20}
+                  className="bg-[#F97316] text-white py-2 px-4 rounded hover:bg-opacity-80 disabled:opacity-50 hover:cursor-pointer"
                 >
                   Siguiente
                 </button>
