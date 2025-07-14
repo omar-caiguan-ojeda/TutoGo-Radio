@@ -13,7 +13,7 @@ export async function generateMetadata() {
     title: "TutoGo Radio",
     description: "Explorá y escuchá tus emisoras favoritas",
     icons: {
-      icon: "/iconLogoBrowser.PNG",
+      icon: "/iconLogoBrowser.png",
     },
   };
 }
@@ -22,7 +22,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="es" className={poppins.variable}>
       <head>
-        <link rel="icon" href="/iconLogoBrowser.PNG" />
+        <link rel="icon" href="/iconLogoBrowser.png" />
       </head>
       <body>
         <Providers>{children}</Providers>
