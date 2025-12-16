@@ -1,335 +1,197 @@
-// // src/components/RadioPlayer.jsx
-// import { useEffect, useState } from "react";
-// import { Howl } from "howler";
-// import { FaPlay, FaPause, FaMusic, FaVolumeUp } from "react-icons/fa";
-// import { motion, AnimatePresence } from "framer-motion";
-
-// export default function RadioPlayer({ current }) {
-//   const [sound, setSound] = useState(null);
-//   const [isPlaying, setIsPlaying] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [volume, setVolume] = useState(0.5);
-
-//   useEffect(() => {
-//     if (current) {
-//       setIsLoading(true);
-//       const newSound = new Howl({
-//         src: [current.url_resolved],
-//         html5: true,
-//         format: [current.codec.toLowerCase()],
-//         volume: volume,
-//         onplay: () => {
-//           setIsLoading(false);
-//           setIsPlaying(true);
-//         },
-//         onloaderror: () => {
-//           setIsLoading(false);
-//           console.error("Error al cargar la emisora");
-//         },
-//         onplayerror: () => {
-//           setIsLoading(false);
-//           console.error("Error al reproducir la emisora");
-//         },
-//       });
-//       setSound(newSound);
-//       newSound.play();
-//       return () => {
-//         newSound.stop();
-//         newSound.unload();
-//         setSound(null);
-//         setIsPlaying(false);
-//         setIsLoading(false);
-//       };
-//     }
-//   }, [current]);
-
-//   useEffect(() => {
-//     if (sound) {
-//       sound.volume(volume);
-//     }
-//   }, [volume, sound]);
-
-//   const togglePlay = () => {
-//     if (sound) {
-//       if (isPlaying) {
-//         sound.pause();
-//         setIsPlaying(false);
-//       } else {
-//         sound.play();
-//         setIsPlaying(true);
-//       }
-//     }
-//   };
-
-//   const handleVolumeChange = (e) => {
-//     const newVolume = parseFloat(e.target.value);
-//     setVolume(newVolume);
-//   };
-
-//   return (
-//     <div
-//   className="w-full max-w-4xl mx-auto bg-gradient-to-br from-[#1e1e1e]/90 via-[#334155]/90 to-[#1e1e1e]/80 p-4 rounded-2xl shadow-lg shadow-[#F97316]/20 border-4 border-[#F97316]/40 backdrop-blur-sm z-20"
-//   style={{ position: 'sticky', top: '1rem' }}
-// >
-//       <motion.div
-//         initial={{ opacity: 0, scale: 0.8 }}
-//         animate={{
-//           opacity: 1,
-//           scale: isLoading ? [1, 1.1, 1] : 1,
-//           transition: isLoading
-//             ? { scale: { repeat: Infinity, duration: 0.8 } }
-//             : { duration: 0.3 },
-//         }}
-//         className="flex items-center justify-between"
-//       >
-//         <div className="flex items-center gap-4">
-//           <img
-//             src={current ? current.favicon || "/iconEmisora.PNG" : "/iconEmisora.PNG"}
-//             alt={current ? current.name : "Reproductor"}
-//             className="w-12 h-12 object-contain rounded"
-//           />
-//           <div>
-//             <p className="font-semibold text-[#F1F5F9]">
-//               {current ? current.name : "Selecciona una emisora"}
-//             </p>
-//             <p className="text-sm text-gray-300">
-//               {current ? current.country : "No hay emisora seleccionada"}
-//             </p>
-//           </div>
-//         </div>
-//         <div className="flex items-center gap-4">
-//           <AnimatePresence>
-//             {isPlaying && !isLoading && (
-//               <motion.div
-//                 className="flex gap-1"
-//                 initial={{ opacity: 0 }}
-//                 animate={{ opacity: 1 }}
-//                 exit={{ opacity: 0 }}
-//               >
-//                 {[0, 1, 2].map((index) => (
-//                   <motion.div
-//                     key={index}
-//                     animate={{
-//                       y: [0, -10, 0],
-//                       opacity: [0.3, 1, 0.3],
-//                       transition: {
-//                         y: { repeat: Infinity, duration: 1.5, delay: index * 0.3 },
-//                         opacity: { repeat: Infinity, duration: 1.5, delay: index * 0.3 },
-//                       },
-//                     }}
-//                   >
-//                     <FaMusic className="text-[#F97316] text-lg" />
-//                   </motion.div>
-//                 ))}
-//               </motion.div>
-//             )}
-//           </AnimatePresence>
-//           <div className="flex items-center gap-2">
-//             {isLoading ? (
-//               <span className="text-[#F97316]">Cargando...</span>
-//             ) : (
-//               <button
-//                 onClick={togglePlay}
-//                 disabled={!current}
-//                 className={`p-2 rounded-full transition hover:cursor-pointer ${
-//                   current
-//                     ? "bg-[#F97316] text-white hover:bg-opacity-80"
-//                     : "bg-gray-500 text-gray-300 hover:cursor-pointer"
-//                 }`}
-//               >
-//                 {isPlaying ? <FaPause /> : <FaPlay />}
-//               </button>
-//             )}
-//             <div className="flex items-center gap-1">
-//               <FaVolumeUp className="text-[#F97316]" />
-//               <input
-//                 type="range"
-//                 min="0"
-//                 max="1"
-//                 step="0.01"
-//                 value={volume}
-//                 onChange={handleVolumeChange}
-//                 disabled={!current}
-//                 className={`w-24 accent-[#F97316] hover:cursor-pointer ${
-//                   !current ? "opacity-50" : ""
-//                 }`}
-//               />
-//             </div>
-//           </div>
-//         </div>
-//       </motion.div>
-//     </div>
-//   );
-// }
-
-
-
-
-import { useEffect, useState } from "react";
-import { Howl } from "howler";
-import { FaPlay, FaPause, FaMusic, FaVolumeUp } from "react-icons/fa";
+import { useEffect, useState, useRef } from "react";
+import { Howl, Howler } from "howler";
+import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import AudioVisualizer from "./AudioVisualizer";
+
+// Global singleton to track the active Howl instance across renders/remounts
+let globalSound = null;
 
 export default function RadioPlayer({ current }) {
-  const [sound, setSound] = useState(null);
+  // Local state for UI feedback
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [playError, setPlayError] = useState(null);
+  const [isMuted, setIsMuted] = useState(false);
+
+  // Sync global volume 
+  useEffect(() => {
+    Howler.volume(isMuted ? 0 : volume);
+  }, [volume, isMuted]);
 
   useEffect(() => {
     if (current) {
+      // 1. Force stop and unload ANY existing global sound
+      if (globalSound) {
+        globalSound.stop();
+        globalSound.unload();
+        globalSound = null;
+      }
+
       setIsLoading(true);
       setPlayError(null);
-      const newSound = new Howl({
+      setIsPlaying(false);
+
+      // 2. Create new global instance
+      globalSound = new Howl({
         src: [current.url_resolved],
-        html5: true,
-        format: [current.codec.toLowerCase()],
-        volume: volume,
+        html5: true, // Force HTML5 Audio to support streaming better
+        format: [current.codec?.toLowerCase() || 'mp3'],
+        autoplay: true,
         onplay: () => {
           setIsLoading(false);
           setIsPlaying(true);
           setPlayError(null);
         },
+        onload: () => {
+           if (globalSound && !globalSound.playing()) {
+               globalSound.play();
+           }
+        },
         onloaderror: (id, err) => {
           setIsLoading(false);
-          setPlayError("No se pudo cargar la emisora. Puede que el servidor esté caído o no sea compatible con tu navegador.");
+          setPlayError("Error de conexión");
+          console.error("Load Error:", err);
         },
         onplayerror: (id, err) => {
           setIsLoading(false);
-          setPlayError("No se pudo reproducir la emisora. Intenta con otra emisora o revisa tu conexión.");
+          setIsPlaying(false);
+          setPlayError("Error de reproducción");
+          console.error("Play Error:", err);
+          globalSound.once('unlock', function() {
+            globalSound.play();
+          });
         },
+        onend: () => {
+           setIsPlaying(false);
+        }
       });
-      setSound(newSound);
-      newSound.play();
-      return () => {
-        newSound.stop();
-        newSound.unload();
-        setSound(null);
-        setIsPlaying(false);
-        setIsLoading(false);
-      };
+
     }
+
+    // Cleanup when component unmounts OR when current changes (effect re-runs)
+    return () => {
+      // Intentional: We do NOT unload sound here to allow playback to continue 
+      // if the user navigates (if we had navigation). 
+      // But since 'current' dependency triggers this cleanup, we only want to 
+      // stop if we constitute a "stop" action. 
+      // actually, for this app, logic above handles "switching" stations.
+      // If we unmount (e.g. close player), we probably want to stop.
+      // For now, relying on the 'if(current)' block above to handle switching.
+    };
   }, [current]);
 
-  useEffect(() => {
-    if (sound) {
-      sound.volume(volume);
-    }
-  }, [volume, sound]);
-
   const togglePlay = () => {
-    if (sound) {
-      if (isPlaying) {
-        sound.pause();
+    if (globalSound) {
+      if (globalSound.playing()) {
+        globalSound.pause();
         setIsPlaying(false);
       } else {
-        sound.play();
+        globalSound.play();
         setIsPlaying(true);
       }
     }
   };
 
   const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
+    const val = parseFloat(e.target.value);
+    setVolume(val);
+    if (isMuted && val > 0) setIsMuted(false);
   };
 
+  if (!current) return null;
+
   return (
-    <div
-      className="w-full max-w-3xl mx-auto bg-gradient-to-br from-[#1e1e1e]/90 via-[#334155]/90 to-[#1e1e1e]/80 p-3 sm:p-4 rounded-2xl shadow-lg shadow-[#F97316]/20 border-4 border-[#F97316]/40 backdrop-blur-sm z-20"
-      style={{ position: 'sticky', top: '0.5rem' }}
-      role="region"
-      aria-label="Reproductor de radio"
-    >
-      {playError && (
-        <div className="mb-3 flex items-center gap-2 bg-[#F97316]/90 border-l-4 border-[#F97316] text-white rounded p-3 animate-shake shadow-lg">
-          <FaMusic className="text-2xl animate-pulse" />
-          <div>
-            <p className="font-semibold">¡Ups! Hubo un problema</p>
-            <p className="text-xs sm:text-sm">{playError}</p>
-          </div>
-        </div>
-      )}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{
-          opacity: 1,
-          scale: isLoading ? [1, 1.1, 1] : 1,
-          transition: isLoading ? { scale: { repeat: Infinity, duration: 0.8 } } : { duration: 0.3 },
-        }}
-        className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4"
+    <div className="sticky top-4 z-50 w-full mb-6">
+       <motion.div 
+        className="glass-panel w-full rounded-2xl p-3 sm:p-4 flex flex-col border-t-2 border-white/20 shadow-2xl relative overflow-hidden"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="flex items-center gap-2 sm:gap-4">
-          <img
-            src={current ? current.favicon || "/iconEmisora.PNG" : "/iconEmisora.PNG"}
-            alt={current ? current.name : "Reproductor"}
-            className="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded"
-            loading="lazy"
-          />
-          <div className="text-center sm:text-left">
-            <p className="font-semibold text-[#F1F5F9] text-sm sm:text-base">
-              {current ? current.name : "Selecciona una emisora"}
-            </p>
-            <p className="text-xs sm:text-sm text-gray-300">
-              {current ? current.country : "No hay emisora seleccionada"}
-            </p>
+        {/* Background Glow for Player */}
+        <div className="absolute inset-0 bg-gradient-to-r from-tutonaranja/10 to-blue-500/10 pointer-events-none" />
+
+        {/* Error Message */}
+        <AnimatePresence>
+          {playError && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="bg-red-500/90 text-white text-xs px-3 py-1 rounded mb-2 text-center backdrop-blur-sm z-10"
+            >
+              {playError}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex items-center justify-between gap-4 relative z-10">
+          
+          {/* Station Info */}
+          <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+            <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden shadow-lg border border-white/10 ${isPlaying ? 'animate-pulse-slow' : ''}`}>
+              <img
+                src={current?.favicon || "/iconEmisora.PNG"}
+                alt={current?.name || "Logo"}
+                className="w-full h-full object-cover bg-slate-900"
+                onError={(e) => e.target.src = "/iconEmisora.PNG"}
+              />
+              {!current && (
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-800/50">
+                  <span className="text-2xl text-white/20">♫</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="min-w-0">
+              <h3 className="text-white font-bold truncate text-sm sm:text-base leading-tight">
+                {current ? current.name : "Selecciona una emisora"}
+              </h3>
+              <p className="text-slate-400 text-xs truncate">
+                {current ? current.country : "TutoGo Radio"}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-4">
-          <AnimatePresence>
-            {isPlaying && !isLoading && (
-              <motion.div className="flex gap-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                {[0, 1, 2].map((index) => (
-                  <motion.div
-                    key={index}
-                    animate={{
-                      y: [0, -8, 0],
-                      opacity: [0.3, 1, 0.3],
-                      transition: {
-                        y: { repeat: Infinity, duration: 1.5, delay: index * 0.3 },
-                        opacity: { repeat: Infinity, duration: 1.5, delay: index * 0.3 },
-                      },
-                    }}
-                  >
-                    <FaMusic className="text-[#F97316] text-sm sm:text-lg" />
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <div className="flex items-center gap-1 sm:gap-2">
-            {isLoading ? (
-              <span className="text-[#F97316] text-sm sm:text-base">Cargando...</span>
-            ) : (
+
+          {/* Controls & Visualizer */}
+          <div className="flex flex-col items-center gap-1 flex-shrink-0">
+             <div className="hidden sm:block w-24 h-6">
+               <AudioVisualizer isPlaying={isPlaying && !isLoading} />
+             </div>
+             
+             <div className="flex items-center gap-4">
               <button
                 onClick={togglePlay}
-                disabled={!current}
-                className={`p-2 rounded-full transition hover:cursor-pointer ${
-                  current
-                    ? "bg-[#F97316] text-white hover:bg-opacity-80"
-                    : "bg-gray-500 text-gray-300 hover:cursor-not-allowed"
-                }`}
-                aria-label={isPlaying ? "Pausar emisora" : "Reproducir emisora"}
-                role="button"
+                disabled={!current || isLoading}
+                className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-tutonaranja text-white shadow-lg shadow-tutonaranja/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white/20"
               >
-                {isPlaying ? <FaPause className="text-sm sm:text-base" /> : <FaPlay className="text-sm sm:text-base" />}
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : isPlaying ? (
+                  <FaPause />
+                ) : (
+                  <FaPlay className="ml-1" />
+                )}
               </button>
-            )}
-            <div className="flex items-center gap-1">
-              <FaVolumeUp className="text-[#F97316] text-sm sm:text-base" aria-hidden="true" />
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={handleVolumeChange}
-                disabled={!current}
-                className={`w-20 sm:w-24 accent-[#F97316] hover:cursor-pointer ${!current ? "opacity-50" : ""}`}
-                aria-label="Control de volumen"
-              />
-            </div>
+             </div>
+          </div>
+
+          {/* Volume */}
+          <div className="hidden sm:flex items-center gap-2 w-auto justify-end">
+            <button onClick={() => setIsMuted(!isMuted)} className="text-slate-400 hover:text-white transition-colors p-2">
+              {isMuted || volume === 0 ? <FaVolumeMute /> : <FaVolumeUp />}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={isMuted ? 0 : volume}
+              onChange={handleVolumeChange}
+              className="w-20 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all"
+            />
           </div>
         </div>
       </motion.div>

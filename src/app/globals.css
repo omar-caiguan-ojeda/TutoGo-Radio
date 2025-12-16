@@ -1,1 +1,49 @@
 @import "tailwindcss";
+
+@theme {
+  --color-tutonaranja: #F97316;
+  --color-tutogris: #334155;
+  --color-oscuro: #0f172a; /* Deep slate blue/black */
+  --color-claro: #F1F5F9;
+  
+  --font-sans: "Inter", system-ui, sans-serif;
+  
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl;
+}
+
+.glass-card {
+  @apply bg-slate-800/40 backdrop-blur-md border border-white/10 shadow-lg hover:border-tutonaranja/50 transition-all duration-300;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-slate-900;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-tutonaranja rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-orange-600;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased selection:bg-tutonaranja/30;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(249, 115, 22, 0.08), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 25%);
+  background-attachment: fixed;
+}
