@@ -14,9 +14,9 @@
     "framer-motion": "^12.23.3",
     "howler": "^2.2.4",
     "i18next": "^25.3.2",
-    "next": "15.3.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "16.0.10",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-icons": "^5.5.0"
   },
   "devDependencies": {
